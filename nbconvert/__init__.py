@@ -29,7 +29,7 @@ import os
 
 def render_nbconvert_template(target, source, env):
 
-    jupyter = 'jupyter nbconvert --output=%s' % target[0].abspath
+    jupyter = 'jupyter nbconvert --execute --output=%s' % target[0].abspath
     for c in env.Dictionary().get('NBCONVERT_ENVIRONMENT_VARS') :
         if c == 'to' :            
             jupyter += ' --to %s' % (env.Dictionary().get('NBCONVERT_ENVIRONMENT_VARS').get(c))
