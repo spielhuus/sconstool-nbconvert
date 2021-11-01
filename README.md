@@ -58,14 +58,12 @@ section can be added before the jupyter metadata starting with `kernelspec`.
         "date": "2021-01-10",
         "tag": "grundlage",
         "title": "cmos",
-        "draft": True
+        "draft": "true"
     },
     
     "kernelspec": {
-        ...
     },
     "language_info": {
-        ...
     }
 }
 ```
