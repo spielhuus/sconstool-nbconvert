@@ -1,5 +1,4 @@
-#
-# Copyright (c) 2013 Henry Gomersall <heng@kedevelopments.co.uk>
+#!/usr/bin/env python
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -28,30 +27,29 @@ from SCons.Errors import StopError
 import os
 
 def render_nbconvert_template(target, source, env):
-
-    jupyter = 'jupyter nbconvert --execute --output=%s' % target[0].abspath
-    for c in env.Dictionary().get('NBCONVERT_ENVIRONMENT_VARS') :
+    dict = env.Dictionary().get('NBCONVERT_ENVIRONMENT_VARS')
+    jupyter = 'jupyter nbconvert'
+    for c in dict :
         if c == 'to' :            
-            jupyter += ' --to %s' % (env.Dictionary().get('NBCONVERT_ENVIRONMENT_VARS').get(c))
-        elif c == 'no-input' :
-            jupyter += ' --no-input'
+            jupyter += ' --to %s' % (dict.get(c))
+        elif c == 'flags' :
+            for f in dict.get(c) :
+                jupyter += ' --%s' % f
         else :
-            jupyter += ' --%s=%s' % (c, env.Dictionary().get('NBCONVERT_ENVIRONMENT_VARS').get(c))
-    jupyter += ' %s' % source[0].abspath
+            jupyter += ' --%s=%s' % (c, dict.get(c))
+    jupyter += ' --output=%s %s' % (target[0].abspath, source[0].abspath)
     env.Execute(jupyter)
 
     return None
 
 def generate(env):
 
-    print("generate nbconvert")
     env.SetDefault(NBCONVERT_ENVIRONMENT_VARS={})
     env['BUILDERS']['nbconvert'] = SCons.Builder.Builder(
             action=render_nbconvert_template)
 
 def exists(env):
-    print("test library")
-    # try:
-    #     import nbconvert
-    # except ImportError as e:
-    #     raise StopError(ImportError, e.message) 
+    try:
+        import nbconvert
+    except ImportError as e:
+        raise StopError(ImportError, e.message) 
