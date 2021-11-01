@@ -9,8 +9,8 @@ This tool can be used to convert jupyter pages with nbconvert.
 Installing it, requires you to copy (or, even better: checkout) the contents of the
 package's ``nbconvert`` folder to
 
-- "``/path_to_your_project/site_scons/site_tools/qt4``", if you need the Qt4 Tool in one project only, or
-- "``/user/share/scons/site_scons/site_tools/qt4``", for a system-wide installation under your current login.
+- ``/path_to_your_project/site_scons/site_tools/nbconvert``", if you need the `nbconvert` Tool in one project only, or
+- ``/user/share/scons/site_scons/site_tools/nbconvert``, for a system-wide installation under your current login.
 
 For more infos about this, please refer to 
 
@@ -21,7 +21,13 @@ For more infos about this, please refer to
 Create a build environment with the nbconvert builder
 
 ```python
-env = Environment(tools=['default','qt4'])
+env = Environment(tools=['nbconvert'], 
+        NBCONVERT_ENVIRONMENT_VARS={'flags': ['execute', 'no-input'],
+                  'to': 'html',
+                  'log-level': 'CRITICAL', 
+                  'ExecutePreprocessor.kernel_name': 'python3',
+                  'HTMLExporter.exclude_anchor_links': True,
+                  'template': 'classic'})
 ```
 
 ## Configuration
@@ -33,13 +39,7 @@ It can also contain a list of build options.
 For a list of options visit the [nbconvert documentation](https://nbconvert.readthedocs.io/)
 
 ```python
-env = Environment(tools=['nbconvert'], 
-        NBCONVERT_ENVIRONMENT_VARS={'flags': ['execute', 'no-input'],
-                  'to': 'html',
-                  'log-level': 'CRITICAL', 
-                  'ExecutePreprocessor.kernel_name': 'python3',
-                  'HTMLExporter.exclude_anchor_links': True,
-                  'template': 'classic'})
+env.nbconvert('rendered_templ.html', os.path.join('test.ipynb'))
 ```
 
 ## Templates
