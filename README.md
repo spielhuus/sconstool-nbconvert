@@ -1,6 +1,6 @@
 # SCons nbconvert tool
 
-## Basics
+## About
 
 This tool can be used to convert jupyter pages with nbconvert.
 
@@ -14,7 +14,7 @@ package's ``nbconvert`` folder to
 
 For more infos about this, please refer to 
 
-* the SCons User's Guide, sect. "Where to put your custom Builders and Tools" and
+* the SCons User's Guide, sect. "Where to put your custom Builders and Tools"
 
 ## Activate the tool
 
@@ -29,14 +29,15 @@ env = Environment(tools=['nbconvert'],
                   'HTMLExporter.exclude_anchor_links': True,
                   'template': 'classic'})
 ```
-
-## Configuration
-
-the `NBCONVERT_ENVIRONMENT_VARS` must contain a list of flags
-allowed flags are `[execute] [allow-errors] [inplace] [clear-output] [no-prompt] [no-input] [show-input]`
+The `NBCONVERT_ENVIRONMENT_VARS` must contain a list of flags.
+Allowed flags are: `[execute] [allow-errors] [inplace] [clear-output] [no-prompt] [no-input] [show-input]`
 
 It can also contain a list of build options.
 For a list of options visit the [nbconvert documentation](https://nbconvert.readthedocs.io/)
+
+## Call the target
+
+The `nbconvert` target can be called with one source and target file.
 
 ```python
 env.nbconvert('rendered_templ.html', os.path.join('test.ipynb'))
@@ -44,10 +45,10 @@ env.nbconvert('rendered_templ.html', os.path.join('test.ipynb'))
 
 ## Templates
 
-There is a template folder in this repository. It can be used to convert the notebooks to hugo 
-pages. It will allow metadata in the jupyter notebook for the `FrontMatter` creation. Jupyterlab 
-is needed to edit this data. The `FrontMatter` section can be added before the jupyter metadata 
-starting with `kernelspec`.
+There is a template folder in this repository. It can be used to convert the notebooks to 
+[hugo](https://gohugo.io/) content pages. It will allow metadata in the jupyter notebook 
+for the `FrontMatter` creation. Jupyterlab is needed to edit this data. The `FrontMatter` 
+section can be added before the jupyter metadata starting with `kernelspec`.
 
 ```json
 {
