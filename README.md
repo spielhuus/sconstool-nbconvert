@@ -10,7 +10,7 @@ Installing it, requires you to copy (or, even better: checkout) the contents of 
 package's ``nbconvert`` folder to
 
 - ``/path_to_your_project/site_scons/site_tools/nbconvert``", if you need the `nbconvert` Tool in one project only, or
-- ``/user/share/scons/site_scons/site_tools/nbconvert``, for a system-wide installation under your current login.
+- ``/user/share/scons/site_scons/site_tools/nbconvert``, for a system-wide installation.
 
 For more infos about this, please refer to 
 
