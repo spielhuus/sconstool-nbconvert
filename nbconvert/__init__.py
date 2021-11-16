@@ -31,12 +31,12 @@ def render_nbconvert_template(target, source, env):
     jupyter = 'jupyter nbconvert'
     for c in dict :
         if c == 'to' :            
-            jupyter += ' --to %s' % (dict.get(c))
+            jupyter += f' --to {dict.get(c)}'
         elif c == 'flags' :
             for f in dict.get(c) :
-                jupyter += ' --%s' % f
+                jupyter += f' --{f}'
         else :
-            jupyter += ' --%s=%s' % (c, dict.get(c))
+            jupyter += f' --{c}={dict.get(c)}'
     jupyter += ' --output=%s %s' % (target[0].abspath, source[0].abspath)
     env.Execute(jupyter)
 

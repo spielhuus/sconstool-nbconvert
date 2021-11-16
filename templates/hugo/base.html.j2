@@ -2,58 +2,65 @@
 {% from 'celltags.j2' import celltags %}
 
 {% block codecell %}
-{%- if not cell.outputs -%}
-{%- set no_output_class="jp-mod-noOutputs" -%}
-{%- endif -%}
-{%- if not resources.global_content_filter.include_input -%}
-{%- set no_input_class="jp-mod-noInput" -%}
-{%- endif -%}
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell {{ no_output_class }} {{ no_input_class }} {{ celltags(cell) }}">
 {{ super() }}
-</div>
 {%- endblock codecell %}
 
 {% block input_group -%}
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
+<div class="column is-12">
+<div class="container">
+<div class="content">
+<div class="card">
 {{ super() }}
+</div>
+</div>
 </div>
 </div>
 {% endblock input_group %}
 
 {% block input %}
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-{{ cell.source | highlight_code(metadata=cell.metadata) }}
-     </div>
+<div class="column is-12" data-type="inline">
+{% raw %}{{< highlight python "linenos=table,linenostart=1" >}}{% endraw %}
+{{ cell.source }}
+{% raw %}{{< / highlight >}}{% endraw %}
 </div>
 {%- endblock input %}
 
 {% block output_group %}
-<div class="jp-Cell-outputWrapper">
+<div class="column is-12">
+<div class="container">
+<div class="content">
+{%- if resources.global_content_filter.include_input_prompt -%}
+<div class="card">
+{%- endif -%}
 {{ super() }}
+{%- if resources.global_content_filter.include_input_prompt -%}
+</div>
+{%- endif -%}
+</div>
+</div>
 </div>
 {% endblock output_group %}
 
 {% block outputs %}
-<div class="jp-OutputArea jp-Cell-outputArea">
 {{ super() }}
-</div>
 {% endblock outputs %}
 
 {% block in_prompt -%}
-<div class="jp-InputPrompt jp-InputArea-prompt">
+  <header class="card-header">
     {%- if cell.execution_count is defined -%}
-        In&nbsp;[{{ cell.execution_count|replace(None, "&nbsp;") }}]:
+        <p class="card-header-title">In&nbsp;[{{ cell.execution_count|replace(None, "&nbsp;") }}]:</p>
     {%- else -%}
-        In&nbsp;[&nbsp;]:
+        <p class="card-header-title">In&nbsp;[&nbsp;]:</p>
     {%- endif -%}
-</div>
+    <button class="card-header-icon" aria-label="more options">
+      <span class="icon">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+    </button>
+  </header>
 {%- endblock in_prompt %}
 
 {% block empty_in_prompt -%}
-<div class="jp-InputPrompt jp-InputArea-prompt">
-</div>
 {%- endblock empty_in_prompt %}
 
 {#
@@ -64,43 +71,50 @@
 {% endblock output_prompt %}
 
 {% block output_area_prompt %}
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">
 {%- if output.output_type == 'execute_result' -%}
+{%- if resources.global_content_filter.include_input_prompt -%}
+  <header class="card-header">
     {%- if cell.execution_count is defined -%}
-        Out[{{ cell.execution_count|replace(None, "&nbsp;") }}]:
+        <p class="card-header-title">Out[{{ cell.execution_count|replace(None, "&nbsp;") }}]:</p>
     {%- else -%}
-        Out[&nbsp;]:
+        <p class="card-header-title">Out[&nbsp;]:</p>
     {%- endif -%}
+    <button class="card-header-icon" aria-label="more options">
+      <span class="icon">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+    </button>
+    </header>
 {%- endif -%}
-    </div>
+{%- endif -%}
 {% endblock output_area_prompt %}
 
 {% block output %}
-<div class="jp-OutputArea-child">
 {% if resources.global_content_filter.include_output_prompt %}
     {{ self.output_area_prompt() }}
 {% endif %}
 {{ super() }}
-</div>
 {% endblock output %}
 
 {% block markdowncell scoped %}
-<div class="jp-Cell-inputWrapper">
+<div class="column is-12">
+<div class="container">
+<div class="content">
 {%- if resources.global_content_filter.include_input_prompt-%}
     {{ self.empty_in_prompt() }}
 {%- endif -%}
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput {{ celltags(cell) }}" data-mime-type="text/markdown">
 {{ cell.source  | markdown2html | strip_files_prefix }}
+</div>
 </div>
 </div>
 {%- endblock markdowncell %}
 
 {% block unknowncell scoped %}
+<h1>unknowncell scoped</h1>
 unknown type  {{ cell.type }}
 {% endblock unknowncell %}
 
 {% block execute_result -%}
-{%- set extra_class="jp-OutputArea-executeResult" -%}
 {% block data_priority scoped %}
 {{ super() }}
 {% endblock data_priority %}
@@ -108,23 +122,32 @@ unknown type  {{ cell.type }}
 {%- endblock execute_result %}
 
 {% block stream_stdout -%}
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>
+<div class="column is-12">
+<div class="container">
+<div class="content">
+<pre class="notification is-warning is-full" data-mime-type="application/vnd.jupyter.stderr">
 {{- output.text | ansi2html -}}
 </pre>
+</div>
+</div>
 </div>
 {%- endblock stream_stdout %}
 
 {% block stream_stderr -%}
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>
+{%- if resources.global_content_filter.include_output_stdin -%}
+<div class="column is-12">
+<div class="content">
+<pre class="notification is-danger is-full" data-mime-type="application/vnd.jupyter.stderr">
 {{- output.text | ansi2html -}}
 </pre>
 </div>
+</div>
+{%- endif %}
 {%- endblock stream_stderr %}
 
 {% block stream_stdin -%}
 {%- if resources.global_content_filter.include_output_stdin -%}
+<h1>include_output_stdin</h1>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stdin">
 <pre>
 {{- output.text | ansi2html -}}
@@ -134,32 +157,55 @@ unknown type  {{ cell.type }}
 {%- endblock stream_stdin %}
 
 {% block data_svg scoped -%}
-<div class="jp-RenderedSVG jp-OutputArea-output {{ extra_class }}" data-mime-type="image/svg+xml">
+{% set svg_id = (range(1, 51) | random) %}
+<div class="column is-12 has-text-centered">
+<div class="container">
+<div class="content">
 {%- if output.svg_filename %}
+<div class="figure spotlight" href="{{ output.svg_filename | posix_path }}" data-mime-type="image/svg+xml">
 <img src="{{ output.svg_filename | posix_path }}">
 {%- else %}
+<div style="display: none;">
+<div id="svg_{{ svg_id }}" class="figure has-text-centered" style="background-color: White;" data-mime-type="image/svg+xml">
+{{ output.data['image/svg+xml'] }}
+</div>
+</div>
+<div class="figure spotlight" data-media="node" data-src="#svg_{{ svg_id }}" data-mime-type="image/svg+xml">
 {{ output.data['image/svg+xml'] }}
 {%- endif %}
+<p class="content">{{ cell.metadata.caption }}</p>
+</div>
+</div>
+</div>
 </div>
 {%- endblock data_svg %}
 
 {% block data_html scoped -%}
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output {{ extra_class }}" data-mime-type="text/html">
+<div class="column is-12" data-mime-type="text/html">
+<div class="container">
+<div class="content">
 {{ output.data['text/html'] }}
+</div>
+</div>
 </div>
 {%- endblock data_html %}
 
 {% block data_markdown scoped -%}
+<h1>data_markdown_scoped</h1>
 <div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output {{ extra_class }}" data-mime-type="text/markdown">
 {{ output.data['text/markdown'] | markdown2html }}
 </div>
 {%- endblock data_markdown %}
 
 {% block data_png scoped %}
-<div class="jp-RenderedImage jp-OutputArea-output {{ extra_class }}">
+<div class="column is-12  has-text-centered">
+<div class="container">
+<div class="content">
 {%- if 'image/png' in output.metadata.get('filenames', {}) %}
+<div class="figure spotlight" data-src="{{ output.metadata.filenames['image/png'] | posix_path }}" data-mime-type="image/png">
 <img src="{{ output.metadata.filenames['image/png'] | posix_path }}"
 {%- else %}
+<div class="figure" data-mime-type="image/png">
 <img src="data:image/png;base64,{{ output.data['image/png'] }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/png') -%}
@@ -174,14 +220,22 @@ height={{ height }}
 class="unconfined"
 {%- endif %}
 >
+<p class="content">{{ cell.metadata.caption }}</p>
+</div>
+</div>
+</div>
 </div>
 {%- endblock data_png %}
 
 {% block data_jpg scoped %}
-<div class="jp-RenderedImage jp-OutputArea-output {{ extra_class }}">
+<div class="column is-12 has-text-centered">
+<div class="container">
+<div class="content">
 {%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
+<div class="figure spotlight" data-src="{{ output.metadata.filenames['image/jpeg'] | posix_path }}" data-mime-type="image/jpeg">
 <img src="{{ output.metadata.filenames['image/jpeg'] | posix_path }}"
 {%- else %}
+<div class="figure" data-mime-type="image/jpeg">
 <img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/jpeg') -%}
@@ -196,16 +250,22 @@ height={{ height }}
 class="unconfined"
 {%- endif %}
 >
+<p class="content">{{ cell.metadata.caption }}</p>
+</div>
+</div>
+</div>
 </div>
 {%- endblock data_jpg %}
 
 {% block data_latex scoped %}
 <div class="jp-RenderedLatex jp-OutputArea-output {{ extra_class }}" data-mime-type="text/latex">
 {{ output.data['text/latex'] | e }}
+<p class="content">{{ cell.metadata.caption }}</p>
 </div>
 {%- endblock data_latex %}
 
 {% block error -%}
+<h1>error</h1>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
 <pre>
 {{- super() -}}
@@ -233,15 +293,17 @@ class="unconfined"
 
 {% set div_id = uuid4() %}
 {%- block data_javascript scoped %}
-<div id="{{ div_id }}" class="jp-RenderedJavaScript jp-OutputArea-output {{ extra_class }}" data-mime-type="application/javascript">
+<!-- h1>javascript scoped</h1>
+<div id="{{ div_id }}" class="jp-RenderedJavaScript jp-OutputArea-output {{ extra_class }}" data-mime-type="application/javascript" -->
 <script type="text/javascript">
-var element = document.getElementById('{{ div_id }}');
+//var element = document.getElementById('{{ div_id }}');
 {{ output.data['application/javascript'] }}
 </script>
-</div>
+<!-- /div -->
 {%- endblock -%}
 
 {%- block data_widget_state scoped %}
+<h1>widget state</h1>
 {% set div_id = uuid4() %}
 {% set datatype_list = output.data | filter_data_type %}
 {% set datatype = datatype_list[0]%}
@@ -256,6 +318,7 @@ var element = document.getElementById('{{ div_id }}');
 {%- endblock data_widget_state -%}
 
 {%- block data_widget_view scoped %}
+<h1>widget view</h1>
 {% set div_id = uuid4() %}
 {% set datatype_list = output.data | filter_data_type %}
 {% set datatype = datatype_list[0]%}
