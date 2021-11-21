@@ -6,29 +6,18 @@
 {%- endblock codecell %}
 
 {% block input_group -%}
-<div class="column is-12">
-<div class="container">
-<div class="content">
 <div class="card">
 {{ super() }}
-</div>
-</div>
-</div>
 </div>
 {% endblock input_group %}
 
 {% block input %}
-<div class="column is-12" data-type="inline">
 {% raw %}{{< highlight python "linenos=table,linenostart=1" >}}{% endraw %}
 {{ cell.source }}
 {% raw %}{{< / highlight >}}{% endraw %}
-</div>
 {%- endblock input %}
 
 {% block output_group %}
-<div class="column is-12">
-<div class="container">
-<div class="content">
 {%- if resources.global_content_filter.include_input_prompt -%}
 <div class="card">
 {%- endif -%}
@@ -36,9 +25,6 @@
 {%- if resources.global_content_filter.include_input_prompt -%}
 </div>
 {%- endif -%}
-</div>
-</div>
-</div>
 {% endblock output_group %}
 
 {% block outputs %}
@@ -97,16 +83,10 @@
 {% endblock output %}
 
 {% block markdowncell scoped %}
-<div class="column is-12">
-<div class="container">
-<div class="content">
 {%- if resources.global_content_filter.include_input_prompt-%}
     {{ self.empty_in_prompt() }}
 {%- endif -%}
 {{ cell.source  | markdown2html | strip_files_prefix }}
-</div>
-</div>
-</div>
 {%- endblock markdowncell %}
 
 {% block unknowncell scoped %}
@@ -122,26 +102,16 @@ unknown type  {{ cell.type }}
 {%- endblock execute_result %}
 
 {% block stream_stdout -%}
-<div class="column is-12">
-<div class="container">
-<div class="content">
 <pre class="notification is-warning is-full" data-mime-type="application/vnd.jupyter.stderr">
 {{- output.text | ansi2html -}}
 </pre>
-</div>
-</div>
-</div>
 {%- endblock stream_stdout %}
 
 {% block stream_stderr -%}
 {%- if resources.global_content_filter.include_output_stdin -%}
-<div class="column is-12">
-<div class="content">
 <pre class="notification is-danger is-full" data-mime-type="application/vnd.jupyter.stderr">
 {{- output.text | ansi2html -}}
 </pre>
-</div>
-</div>
 {%- endif %}
 {%- endblock stream_stderr %}
 
@@ -158,54 +128,37 @@ unknown type  {{ cell.type }}
 
 {% block data_svg scoped -%}
 {% set svg_id = (range(1, 51) | random) %}
-<div class="column is-12 has-text-centered">
-<div class="container">
-<div class="content">
 {%- if output.svg_filename %}
-<div class="figure spotlight" href="{{ output.svg_filename | posix_path }}" data-mime-type="image/svg+xml">
+<div class="figure has-text-centered spotlight" href="{{ output.svg_filename | posix_path }}" data-mime-type="image/svg+xml">
 <img src="{{ output.svg_filename | posix_path }}">
 {%- else %}
 <div style="display: none;">
-<div id="svg_{{ svg_id }}" class="figure has-text-centered" style="background-color: White;" data-mime-type="image/svg+xml">
+<div id="svg_{{ svg_id }}" class="figure" style="background-color: White;" data-mime-type="image/svg+xml">
 {{ output.data['image/svg+xml'] }}
 </div>
 </div>
-<div class="figure spotlight" data-media="node" data-src="#svg_{{ svg_id }}" data-mime-type="image/svg+xml">
+<div class="figure has-text-centered spotlight my-6" data-media="node" data-src="#svg_{{ svg_id }}" data-mime-type="image/svg+xml">
 {{ output.data['image/svg+xml'] }}
 {%- endif %}
 <p class="content">{{ cell.metadata.caption }}</p>
 </div>
-</div>
-</div>
-</div>
 {%- endblock data_svg %}
 
 {% block data_html scoped -%}
-<div class="column is-12" data-mime-type="text/html">
-<div class="container">
-<div class="content">
 {{ output.data['text/html'] }}
-</div>
-</div>
-</div>
 {%- endblock data_html %}
 
 {% block data_markdown scoped -%}
 <h1>data_markdown_scoped</h1>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output {{ extra_class }}" data-mime-type="text/markdown">
 {{ output.data['text/markdown'] | markdown2html }}
-</div>
 {%- endblock data_markdown %}
 
 {% block data_png scoped %}
-<div class="column is-12  has-text-centered">
-<div class="container">
-<div class="content">
 {%- if 'image/png' in output.metadata.get('filenames', {}) %}
-<div class="figure spotlight" data-src="{{ output.metadata.filenames['image/png'] | posix_path }}" data-mime-type="image/png">
+<div class="figure has-text-centered spotlight" data-src="{{ output.metadata.filenames['image/png'] | posix_path }}" data-mime-type="image/png">
 <img src="{{ output.metadata.filenames['image/png'] | posix_path }}"
 {%- else %}
-<div class="figure" data-mime-type="image/png">
+<div class="figure has-text-centered" data-mime-type="image/png">
 <img src="data:image/png;base64,{{ output.data['image/png'] }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/png') -%}
@@ -222,20 +175,14 @@ class="unconfined"
 >
 <p class="content">{{ cell.metadata.caption }}</p>
 </div>
-</div>
-</div>
-</div>
 {%- endblock data_png %}
 
 {% block data_jpg scoped %}
-<div class="column is-12 has-text-centered">
-<div class="container">
-<div class="content">
 {%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
-<div class="figure spotlight" data-src="{{ output.metadata.filenames['image/jpeg'] | posix_path }}" data-mime-type="image/jpeg">
+<div class="figure has-text-centered spotlight" data-src="{{ output.metadata.filenames['image/jpeg'] | posix_path }}" data-mime-type="image/jpeg">
 <img src="{{ output.metadata.filenames['image/jpeg'] | posix_path }}"
 {%- else %}
-<div class="figure" data-mime-type="image/jpeg">
+<div class="figure has-text-centered " data-mime-type="image/jpeg">
 <img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] }}"
 {%- endif %}
 {%- set width=output | get_metadata('width', 'image/jpeg') -%}
@@ -252,25 +199,19 @@ class="unconfined"
 >
 <p class="content">{{ cell.metadata.caption }}</p>
 </div>
-</div>
-</div>
-</div>
 {%- endblock data_jpg %}
 
 {% block data_latex scoped %}
-<div class="jp-RenderedLatex jp-OutputArea-output {{ extra_class }}" data-mime-type="text/latex">
+<h1>latex</h1>
 {{ output.data['text/latex'] | e }}
 <p class="content">{{ cell.metadata.caption }}</p>
-</div>
 {%- endblock data_latex %}
 
 {% block error -%}
 <h1>error</h1>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
 <pre>
 {{- super() -}}
 </pre>
-</div>
 {%- endblock error %}
 
 {%- block traceback_line %}
