@@ -21,8 +21,12 @@ For more infos about this, please refer to
 Create a build environment with the nbconvert builder
 
 ```python
-env = Environment(tools=['nbconvert'], 
-        NBCONVERT_ENVIRONMENT_VARS={'flags': ['execute', 'no-input'],
+import os
+import sconstool_nbconvert
+
+env = Environment(ENV = {'PATH' : os.environ['PATH']},
+                  tools=['default', sconstool_nbconvert.generate],
+                  NBCONVERT_ENVIRONMENT_VARS={'flags': ['execute', 'no-input'],
                   'to': 'html',
                   'log-level': 'CRITICAL', 
                   'ExecutePreprocessor.kernel_name': 'python3',
