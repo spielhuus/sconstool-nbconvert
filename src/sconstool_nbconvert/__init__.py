@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal in the Software without restriction, including
@@ -27,6 +25,7 @@ from SCons.Errors import StopError
 import os
 
 def render_nbconvert_template(target, source, env):
+    print(f'PATH: {os.environ["PATH"]}')
     dict = env.Dictionary().get('NBCONVERT_ENVIRONMENT_VARS')
     jupyter = 'jupyter nbconvert'
     for c in dict :
